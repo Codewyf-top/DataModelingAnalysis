@@ -1,0 +1,308 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+ v = c(2, 9, 1, 45, -3, 19, -5, 6)
+
+sort(v)
+```
+```{r}
+order(v)
+```
+```{r}
+sort(v, decreasing = FALSE)
+```
+
+```{r}
+order(v, decreasing = FALSE)
+```
+
+```{r}
+ir = iris
+or_ir = ir[order(ir$Sepal.Length, decreasing = TRUE), ]
+top5 = or_ir[1:5,]
+top5
+```
+```{r}
+top5a = ir[order(ir$Sepal.Length, decreasing = TRUE),][1:5,]
+top5a
+```
+```{r}
+ir[order(ir$Sepal.Length, decreasing = TRUE), c("Sepal.Length", "Species")][1:5,]
+```
+```{r}
+ir = iris
+
+aggregate(ir$Sepal.Length, by = list(ir$Species), FUN = mean)
+```
+```{r}
+aggregate(ir$Sepal.Width, by= list(ir$Species), summary)
+```
+```{r}
+aggregate(ir[,c("Sepal.Length","Sepal.Width")], by = list(ir$Species), mean)
+```
+```{r}
+ir$indoor = sample(c(TRUE,FALSE), nrow(ir), TRUE)
+
+head(ir)
+```
+```{r}
+aggregate(ir$Sepal.Length, by = list(ir$Species, ir$indoor), mean)
+```
+```{r}
+mean_by_sp_ind = aggregate(ir$Sepal.Length, by = list(ir$Species, ir$indoor), mean)
+colnames(mean_by_sp_ind) = c("Species", "Indoor", "Average")
+mean_by_sp_ind
+```
+```{r}
+aggregate(ir[,1:4], by = list(ir$Species), mean)
+```
+```{r}
+aggregate(Sepal.Length ~ Species, data = ir, mean)
+```
+```{r}
+aggregate(Sepal.Length ~ Species + indoor, data = ir, mean)
+```
+```{r}
+
+aggregate(cbind(Sepal.Length, Sepal.Width) ~ Species, ir, mean)
+```
+```{r}
+aggregate(. ~ Species + indoor, data = ir, mean)
+```
+```{r}
+aggregate(cbind(Sepal.Length, Sepal.Width) ~ Species, data = ir,
+  subset = Petal.Width>0.6, mean)
+```
+```{r}
+#Let's calculate the mean according to Species of only the largest X values #for each Species
+meanX = function(vec, n){mean(head(vec[order(-vec)], n))}
+#Now, let's calculate the mean of the top-5 samples according to Sepal.Length #aggregated by Species
+aggregate(ir$Sepal.Length, by = list(ir$Species), FUN= function(x) meanX(x, 5))
+```
+```{r}
+aggregate(ir$Petal.Width, by = list(ir$Species, ir$indoor), FUN= function(x) meanX(x, 10))
+```
+```{r}
+aggregate(ir$Sepal.Length, by = list(ir$Species),
+  FUN= function(x) mean(head(x[order(-x)], 5)))
+```
+```{r}
+aggregate(ir$Sepal.Length, by = list(ir$Species),
+FUN= function(x, n=5) mean(head(x[order(-x)], n)))
+```
+```{r}
+ aggregate(ir$Sepal.Length, n=5, by = list(ir$Species), FUN= function(x, n) mean(head(x[order(-x)], n)))
+```
+```{r}
+aggregate(ir$Sepal.Length, 5, by = list(ir$Species),
+  FUN= function(x, n) mean(head(x[order(-x)], n)))
+```
+```{r}
+aggregate(ir$Sepal.Length, by = list(ir$Species),
+  FUN= function(x, n=5, m=6) mean(x[x>n & x<m]))
+```
+```{r}
+ aggregate(ir$Sepal.Length, n=5, m=6, by = list(ir$Species), FUN= function(x, n, m) mean(x[x>n & x<m]))
+```
+```{r}
+ aggregate(ir$Sepal.Length, 5, 6, by = list(ir$Species), FUN= function(x, n, m) mean(x[x>n & x<m]))
+```
+```{r}
+ir = iris
+```
+```{r}
+library(dplyr)
+filter(iris, Species == "setosa")
+iris[iris$Species == "setosa",]
+```
+```{r}
+filter(iris, Species=="setosa" & Sepal.Length>5.5)
+
+```
+```{r}
+iris[iris$Species=="setosa" & iris$Sepal.Length>5.5,]
+```
+```{r}
+arrange(iris, Sepal.Length) #dplyr 
+iris[order(iris$Sepal.Length, decreasing = FALSE),] # basic R 
+iris[order(iris$Sepal.Length),] # basic R
+```
+```{r}
+#by default, order will sort values in ASCENDING manner.
+##desc allows you to arrange data in descending order arrange(iris, desc(Sepal.Length))
+iris[order(iris$Sepal.Length, decreasing = TRUE),] 
+iris[order(-iris$Sepal.Length),]
+```
+```{r}
+arrange(iris, Sepal.Length,Sepal.Width)[1:5,]
+```
+```{r}
+#by indexing after calling each function, we can look at the
+#top N rows (or results). Here, we are looking at the top 5 results 
+iris[order(iris$Sepal.Length, iris$Sepal.Width,decreasing = FALSE),][1:5,]
+```
+```{r}
+arrange(iris, Sepal.Length, desc(Sepal.Width))[1:5,]
+```
+```{r}
+iris[order(iris$Sepal.Length, -iris$Sepal.Width),][1:5,]
+```
+```{r}
+library(dplyr)
+select(ir,Petal.Width, Species) 
+ir[,c("Petal.Length","Species")]
+select(ir,1:3) #you can use indexes, too! 
+ir[,1:3]
+```
+```{r}
+#combine select with functions starts_with and
+#ends_with to select groups of variables
+#with commonalities in their names 
+select(ir,starts_with("Petal")) #Petal.Length and Petal.Width 
+select(ir, ends_with("Length")) #Sepal.Length and Petal.Length
+#combine select with – (dash) to deselect fields
+select(ir, -Species) 
+ir[, -c(5)]
+select(ir, -starts_with("Petal"))
+```
+```{r}
+ir = mutate(ir, Sepal.Length*2)
+ir = mutate(ir, DoubleSepalL = Sepal.Length*2)
+#this option allows you to name the field in the data frame 
+ir$DoubleSepalL = ir$Sepal.Length*2
+#you can add several columns at a time
+ir = mutate(ir, DoubleSepalL = Sepal.Length*2, PetalRatio = Petal.Length/Petal.Width)
+ir$DoubleSepalL = ir$Sepal.Length*2 
+ir$PetalRatio = ir$Petal.Length/ir$Petal.Width
+```
+```{r}
+summarise(ir, mean(Sepal.Length)) 
+summarise(ir, n_distinct(Species))
+#you can calculate several functions at a time 
+summarise(ir, avg = mean(Sepal.Length),
+std= sd(Sepal.Length), total=n()) 
+summary(ir)
+```
+```{r}
+ # Returns five random rows in iris.
+# Due to the random nature of this, your results will most likely never match! 
+sample_n(iris,5)
+```
+```{r}
+iris[sample(1:nrow(iris)),][1:5,]
+```
+```{r}
+sample_frac(iris,0.01) # samples 1% of the data – 2 instances
+```
+```{r}
+iris[sample(1:nrow(iris)),][1:ceiling(nrow(iris)*0.01),]
+```
+```{r}
+# Not very useful – only a data frame is returned.
+group_by(ir, Species)
+
+```
+```{r}
+ # You can group by two variables, too.
+# But, again, nothing happens when group_by is used alone. 
+group_by(ir, Species, Petal.Length)
+```
+```{r}
+ #Calculates standard deviation of Petal Width by Species
+summarize(group_by(ir, Species), sd(Petal.Width))
+```
+```{r}
+aggregate(ir$Petal.Width, by=list(ir$Species), FUN=sd) #Base R
+```
+```{r}
+#Calculates the correlation between Sepal Length and Width by Species.
+summarize(group_by(ir, Species), r=cor(Sepal.Length, Sepal.Width))
+```
+```{r}
+#Let's create a new bolean variable to flag large petals.
+ir$LargeRatio = ir$PetalRatio>3
+#Calculates how many large and small petals there are 
+summarize(group_by(ir, LargeRatio),n())
+```
+```{r}
+#Calculates number of samples by Species and by PetalRatio
+summarize(group_by(ir, LargeRatio,Species),n())
+```
+```{r}
+#Read this as: take Sepal Length, then calculate the mean.
+ir$Sepal.Length %>% mean
+```
+```{r}
+ #This is the same as writing:
+mean(ir$Sepal.Length)
+```
+```{r}
+pi %>% trunc
+```
+```{r}
+trunc(pi)
+
+```
+```{r}
+ #It can also be used with other dplyr functions:
+group_by(ir, Species) %>% summarise(avg= mean(Petal.Length))
+```
+```{r}
+ #or
+summarise(group_by(ir,Species), r=mean(Petal.Length))
+```
+```{r}
+#A. Using basic R – One of the many possible implementations
+# You need an auxiliary variable to store the non_virginica plants first 
+non_virg = ir[ir$Species!="virginica", c("Petal.Length")] 
+sum(non_virg>3.5)
+```
+```{r}
+ #B. Using dplyr with no piping
+summarise(filter(ir,Species!="virginica",Petal.Length>3.5), n())
+```
+```{r}
+ #C. Using dplyr with piping – follows a more intuitive process:
+ir %>% filter(Species!="virginica", Petal.Length>3.5) %>% nrow()
+```
+```{r}
+ ir %>% # start with ir data frame then... 
+  filter(Species!="virginica", Petal.Length>3.5) %>%
+   #... return rows of not virginica plants and petal length is over 3.5 then... 
+  nrow() # count how many rows there are
+```
+```{r}
+ir %>%
+  mutate(petal_w_l = Petal.Width/Petal.Length) %>% 
+  arrange(desc(petal_w_l)) %>%
+  head(3) %>% select(Species, petal_w_l)
+```
+```{r}
+  ir %>% #start with ir, then...
+mutate(petal_w_l = Petal.Width/Petal.Length)%>%
+#add a new field that calculates petal width to length ratio then...
+  arrange(desc(petal_w_l)) %>% # order them in descending order, then... 
+  select(Species, petal_w_l) %>% #keep the species and ratio attbs then... 
+  head(3) #then show the 3 largest ones
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+

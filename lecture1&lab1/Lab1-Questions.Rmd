@@ -1,0 +1,622 @@
+---
+title: 'Lab 1: Introduction to R'
+subtitle: 'Question Sheet' 
+author: 'Dr Mercedes Torres Torres'
+classoption: twoside
+output:
+  html_document: 
+    df_print: paged
+    toc: yes
+    toc_depth: '2'
+  html_notebook: # To preview
+    toc: yes
+    toc_depth: '2'
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+  pdf_document:
+    toc: no  #no table of contents for the PDF file
+    fig_caption: yes #allows you to caption images
+    number_sections: true
+header-includes:  #These are packages that I am adding to format the PDF
+- \usepackage{graphicx}
+- \usepackage{float}
+- \usepackage{fancyhdr} # To add headers and footers
+- \pagestyle{fancy} #the page style
+- \fancyhead[CE,CO]{} #different heaters for different areas
+- \fancyhead[LE,LO]{\textit{COMP4030  Data Modelling and Analysis}} #different heaters for different areas
+- \fancyhead[RE,RO]{\nouppercase{\textit{\leftmark}}}
+- \usepackage{xcolor} 
+- \usepackage{framed} 
+- \colorlet{shadecolor}{gray!10} #shades coding chunks
+---
+
+# Introduction {-}
+
+This question sheet presents a series of basic exercises designed to help you familiarize yourself with R, particularly its syntax and its wide catalogue of already-implemented functions. 
+
+In this lab session, you will learn to:
+
++	Use your first R Markdown Notebook
+
++ Carry out simple arithmetic calculations
+
++	Import new packages and use operations from these packages
+
++	Define and use vectors
+
++	Define and use matrices
+
++	Plot simple functions 
+
+To begin, start your R editor (RStudio or your editor of choice) and work through the Lab 1 Instructions first. Then and Lab1-Questions.pdf and start working these exercises.
+
+If you want to use R Notebooks to solve your questions, use the file Lab1-Questions.Rmd. If you want to use simple scripts, open your own .r file in RStudio.
+
+**NOTE: In this lab, you cannot use any control statements (_if-else_) or loops (_for_ or _while_).**
+
+# R Notebooks
+
+Before you start with the exercises, take a look at this file in the .Rmd format. Familiarise yourself with the contents introduced in the Instruction Sheet. 
+
+1. Look at the YAML section: do you understand the options shown?
+
+2. Look at how the text is organised in this document:
+
+    2.1. How are headers signalled? How can create different levels of headers?
+    
+    2.2. How do you bold text? How do you italicise text?
+    
+    2.3. How can you write in-line mathematica expressions?
+  
+3. Look at the code chunks in this document:
+
+    3.1. How can you run a code chunk?
+    
+    3.2. What rules are applied inside these chunks?
+    
+    3.3. How are graphs shown? (You will have to solve the Simple Plotting tasks before being able to see this)
+    
+    3.4. What are some of the options that can be used for the chunks?
+
+
+# Built-in mathematical functions
+
+In this section, you will learn how to carry out simple arithmetic operations in R. *Hint:* you can find more information about arithmetic functions in the Instructions or using the help function in R (??arithmetic)
+
+1. Define $x^1$ as 3342, $x^2$ as 12 and $x^3$ as 3.
+```{r}
+x1 = 3342
+
+x2 = 12
+
+x3 = 3
+
+```
+
+2. Use the correct operations and functions to calculate:
+    
+    a. x1 added to x2
+```{r}
+a = x1 + x2
+```
+    
+    b.	x1 multiplied by x2
+```{r}
+b = x1 * x2
+```
+    
+    c.	x1 divided by x2
+```{r}
+c = x1 / x2
+```
+    
+    d.	x2 to the power of x3
+```{r}
+x3 ^ x2
+
+```
+    
+    e.	The module of c.
+```{r}
+e = a %% b 
+```
+    
+    f.	The log to the base 10 of x1
+```{r}
+log10(x1)
+```
+    
+    g.	The log to the base 10 of x3
+```{r}
+log10(x3)
+```
+    
+    h.	The log to the base 2 of x3
+```{r}
+log2(x3)
+log(x3,2)
+```
+    
+    i.	The square root of x2
+    
+        i.	By using a built-in function in R
+```{r}
+sqrt(x2)
+```
+        
+        ii.	By using the exponent function
+```{r}
+x2^0.5
+
+x2^(1/2)
+```
+        
+    j.	The summation of the results of a. and b.
+```{r}
+a = x1 + x2
+b = x1 * x2
+a + b
+```
+    
+    k.	The mean between a. and b.
+```{r}
+mean(c(a,b))
+(a+b)/2
+```
+    
+    l.	Truncate the result of d.
+```{r}
+
+trunc(x1^x2)
+```
+    
+3.	Round the constant $\pi$ with:
+   
+    a.	No decimal places
+```{r}
+round(pi)
+```
+    
+    b.	One decimal place
+```{r}
+round(pi,1)
+```
+    
+    c.	Three decimal places
+```{r}
+round(pi,3)
+```
+  
+
+#	Additional mathematical functions (installing packages)
+
+In addition to the already built-in functions present in R, you can also install external packages. You can find a vast array of packages in the CRAN repository (https://cran.r-project.org/)
+
+These packages will have a catalogue of additional built-in functions which will increase the functionality of R. Using external packages will help you carry out complex calculations more quickly.
+
+In this section, you will install your first external package: schoolmath. This package contains datasets  and functions for simple math operations taugh at school, such as prime calculation. You can find schoolmath here: https://cran.r-project.org/web/packages/schoolmath and its documentation here: https://cran.r-project.org/web/packages/schoolmath/schoolmath.pdf Most R packages' documentation follow the same format: you will find a list of functions implemented in the package, information about what they do, and examples on how to call them.
+
+1.	Use the _install.packages()_ instruction to install _schoolmath_
+
+2.	Read the reference manual. 
+
+3. Load the _schoolmath_ library.
+
+4. Define _x1_ as 34734, _x2_ as 910 and _x3_ as 1563. 
+```{r}
+x1 = 34734
+x2 = 910
+x3 = 1563
+```
+
+5. Decompose _x1_, _x2_, and _x3_ into their prime factors.
+```{r}
+library(schoolmath)
+y1 = prime.factor(x1)
+y2 = prime.factor(x2)
+y3 = prime.factor(x3)
+```
+
+6. Which number has the highest prime factor?
+```{r}
+max(c(max(prime.factor(x1)),max(prime.factor(x2)),max(prime.factor(x3))))
+```
+
+7. What is the least common denominator between _x1_, _x2_, and _x3_?
+```{r}
+res = scm(x1,scm(x2,x3))
+res
+```
+
+8. What is the greatest common divisor of between _x1_ and _x2_?
+```{r}
+gcd(x1,x2)
+```
+
+9. What is the greatest common divisor between _x1_, _x2_, and _x3_?
+```{r}
+gcd(x1,gcd(x2,x3))
+```
+
+
+# Vectors
+
+1.	Try the following commands and write down what each of them is doing:
+```{r eval = FALSE, include =TRUE}
+x <- c(3,6,8)  # creates x
+x # shows x
+x/2 # shows x/2
+x^2 # shows 2 to power to x
+sqrt(x) 
+
+x[2] # shows second element of x, 6
+x[c(1,3)] # shows elements 1 and 3 of x
+x[-3] # deletes elements in position 3
+
+y <- c(2,5,1) 
+y 
+x-y 
+x*y 
+x[y>1.5] # shows elements of x whose condition indexes in y were true
+y[x==6] # shows elements of x whose condition indexes in x were true
+
+
+4:10 # shows sequence of number between 4 and 10 (intervals of 1)
+z <- seq(2,3,by=0.1) # saves in z sequence between 2 and 3(intervals of 0.1)
+rep(x,each=4) # repeats values in x 4times each
+```
+
+2. Using _x_, _y_, _z_ from the previous exercise, calculate the following:
+    
+    a.	The maximum of each of the vectors
+```{r}
+x = c(3,6,8)
+y = c(2,5,1)
+z = seq(2,3, by=0.1)
+max(x)
+max(y)
+max(z)
+```
+    
+    b.	The minimum of each of the vectors
+```{r}
+min(x)
+min(y)
+min(z)
+```
+    
+    c.	The mean of each of the vectors
+```{r}
+mean(x)
+mean(y)
+mean(z)
+```
+    
+    d.	Which members of _x_ are prime (_hint_: remember the _schoolmath_ package)
+```{r}
+library(schoolmath)
+x[is.prim(x)]
+```
+    
+    e.	The square of vector _y_
+```{r}
+y^2
+```
+    
+    f.	A vector prime with the first 50 prime numbers (_challenge_: can you implement this using only 1 instruction?)
+```{r}
+prime = primes()[1:50]
+```
+    
+    g.	A vector _a_ containing natural numbers from 1 to 50
+```{r}
+a = 1:50
+```
+    
+    h.	A vector _b_ containing natural odd numbers from 1 to 150
+```{r}
+b = seq(1,150,2)
+```
+    
+    i.	A vector _o_ which contains all three vectors concatenated
+```{r}
+o = c(prime, a, b)
+```
+    
+    j.	A vector _m_ which contains values from even numbers in _o_
+```{r}
+m = o[o%%2==0]
+m1 = o[is.even(o)]
+```
+
+
+3.	We have registered the height in cm and weight in kg for four people. Heights are: 180, 165, 160, 193 (cms). Weights are 87, 58, 65, 100 (kgs)
+
+    a.	Create two vectors, _height_ and _weight_, with the data.
+```{r}
+height = c(1.8,1.65,1.6,1.93)
+weight = c(87,58,65,100)
+```
+    
+    b.	Create a vector bmi with the Body Mass Index values for the four people. The BMI is calculated with: Weight in kg / (Height in m)^2
+```{r}
+bmi = weight/(height^2)
+```
+    
+    c.	Create a vector _bmi\_log_ with the natural logarithm to the BMI values.
+```{r}
+bmi_log = log(bmi)
+```
+    
+    d.	Create a vector with the weights for those people who have a BMI larger than 25.
+```{r}
+v = bmi[bmi>25]
+v
+```
+
+# Matrices
+
+1.  Create three matrices A, B and C: 
+
+    $$\mathbf{A} = \left[\begin{array}
+    {rrr}
+    12 & 3 & 4 \\
+    9 & 6 & 2 \\
+    5 & 17 & 1
+    \end{array}\right]
+    $$
+
+    $$\mathbf{B} = \left[\begin{array}
+    {rrr}
+    1 & 1 & 3 \\
+    9 & 8 & 5 \\
+    2 & 34 & 9
+    \end{array}\right]
+    $$
+
+    $$\mathbf{C} = \left[\begin{array}
+    {rr}
+    1 & 3  \\
+    9 & 5  \\
+    10 & 2
+    \end{array}\right]
+    $$
+```{r}
+A = matrix(c(12,9,5,3,6,17,4,2,1), nrow=3, ncol = 3)
+B = matrix(c(1,9,2,1,8,34,3,5,9), nrow=3, ncol= 3)
+C = matrix(c(1,9,10,3,5,2), nrow=3, ncol = 2)
+```
+
+
+    a. Calculate the number of rows of A
+```{r}
+a = nrow(A)
+```
+    
+    b. Calculate the number of columns of C
+```{r}
+b = ncol(C)
+```
+    
+    c. A + B
+```{r}
+c = A + B
+```
+    
+    d. A * B
+```{r}
+d = A * B
+```
+    
+    e. Diagonal matrix of A-B
+```{r}
+e = diag(diag(A-B)) 
+```
+    
+    f. B transposed 
+```{r}
+f = t(B)
+```
+    
+    
+    g. The inverse of A ($A^{-1}$)
+```{r}
+g_aux = diag(rep(1, times=3))
+g = solve(A, g_aux)
+```
+    
+    h. $|A|$ (the determinant of A) 
+```{r}
+h = det(A)
+```
+    
+    i. A*B
+```{r}
+i = A*B
+```
+    
+    j.	Concatenate A and B by rows. The resulting matrix will have 6 rows and 3 columns
+```{r}
+j = rbind(A,B)
+```
+    
+    k. Concatenate B and C by columns. The resulting matrix will have 3 rows and 5 columns
+```{r}
+k = cbind(B,C)
+```
+    
+    l. Summation of B’s columns
+```{r}
+l = colSums(B)
+```
+    
+    m. A%*%C
+```{r}
+m = A%*%C
+```
+    
+    n. A*A
+```{r}
+n = A*A # multiplies element by element
+```
+    
+    o. A%*%A. What is the difference between this operation and the previous one? 
+```{r}
+o = A%*%A # matrix A multiply matrix A
+```
+
+
+2. We have collected the marks obtained in five different modules (\textit{m1} to _m5_) from six different students. Answer the following questions **without using any control structures (conditionals, loops, etc.)**:
+
+    a. Create a matrix N that contains their marks. Each student will be a row and each column will be the marks of that module.
+
+        + John: 32, 52, 50, 44, 50
+        
+        + Mary: 88, 67, 59, 70, 70
+        
+        + Mark: 78, 77, 68, 67, 80
+        
+        + June:  89, 90, 81, 89, 87
+        
+        + Claire: 61, 65, 50, 78, 50
+        
+        + Anthony: 67, 68, 65, 40, 66
+```{r}
+N = rbind(c(32,52,50,44,50),
+          c(88,67,59,70,70),
+          c(78,77,68,67,80),
+          c(89,90,81,89,87),
+          c(61,65,50,78,50),
+          c(67,68,65,40,66))
+rownames(N) = c("John","Mary", "Mark","June","Claire","Anthony")
+```
+        
+    b.	Create a matrix G that contains their gender information. You might want to codify the gender with numbers to make calculations easier.
+  
+        + John: M
+        
+        + Mary: F
+        
+        + Mark: M
+        
+        + June:  F
+        
+        + Claire: F
+        
+        + Anthony: M
+```{r}
+G = rbind(c(0,1,0,1,1,0))
+```
+  
+    c.	How many female students are there?
+```{r}
+sum(G==1)
+
+sum(G)
+```
+    
+    d.	What is the overall average of each student?
+```{r}
+avg = rowMeans(N)
+avg
+```
+    
+    e.	What is the highest average?
+```{r}
+max(avg)
+which.max(avg)
+```
+    
+    f.	How many students have an average between 55 and 75?
+```{r}
+sum(avg>=55 & avg<=75)
+```
+    
+    g.	What is the difference between the highest average of male students and female students?
+```{r}
+abs(max(avg[G==1]) - max(avg[G==0]))
+```
+    
+    h.	Who performed better in the module m3?
+```{r}
+which.max(N[,3])
+```
+    
+    i.	Which module has the smallest difference between the highest mark and the lowest mark?
+```{r}
+which.min(abs(apply(N,2,max)-apply(N, 2, min )))
+```
+    
+    j.	Which module has the most distinctions (70 marks and over)?
+```{r}
+colSums(N>=70)
+```
+    
+    k.	Which module have the male students failed the most?
+```{r}
+M = N[G==0,]
+which.max(colSums(M<50))
+```
+    
+    l.	What is the gender of the student with the highest mark in m4?
+```{r}
+G[which.max(N[,4])]
+```
+
+# Simple Plotting
+
+1. Plot the following functions:
+    
+    a.	The sin function between -$\pi$ and 4*$\pi$ with a green line
+```{r}
+x = seq(-pi,4*pi)
+y = sin(x)
+plot(x,y,col="green",type = "l",main = "Sin(x) between -Pi and 4*Pi")
+```
+    
+    b.	The cos function between -4*$\pi$ and 4*$\pi$ with red markers every 0.01 values
+```{r}
+x1 = seq(-4*pi,4*pi,by=0.01)
+y1 = cos(x1)
+plot(x1,y1,col="red",pch="*",main = "Cos(x) between -4*Pi and 4*Pi")
+```
+    
+    c.	The log function between 1 and 50 with a blue line
+```{r}
+h = seq(1,50)
+k = log(h)
+plot(h,k,col="blue",type = "l",main = "Log(x) between 1 and 50")
+```
+    
+    d.	The natural logarithm between 1 and 300 with a black line
+```{r}
+h1 = seq(1,300)
+k1 = log(h1)
+plot(h1,k1,col="black",type="l",main="Natural logarithm between 1 and 300")
+```
+
+2. Create a 2x2 plot that shows the following functions in each quadrant. Each plot should: a) be shown between the -5 and 5 at intervals of 0.5 and b) Have sensible titles and axes labels:
+    
+    a.	$y= x$
+    
+    b.	$y = x2$
+    
+    c.	$y = x3$
+    
+    d.	$y = x4$
+```{r}
+sinx = seq(-5,5,by=0.5)
+siny1 = sinx
+siny2 = sinx^2
+siny3 = sinx^3
+siny4 = sinx^4
+par(mfrow=c(2,2))
+plot(sinx,siny1,main="y=x",xlab="x axis",ylab="y axis")
+plot(sinx,siny2,main="y=x^2",xlab="x axis",ylab="y axis")
+plot(sinx,siny3,main="y=x^3",xlab="x axis",ylab="y axis")
+plot(sinx,siny4,main="y=x^4",xlab="x axis",ylab="y axis")
+
+
+```
+

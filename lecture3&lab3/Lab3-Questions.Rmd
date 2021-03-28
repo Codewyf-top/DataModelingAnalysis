@@ -1,0 +1,220 @@
+---
+title: 'Lab 3: Modelling in R'
+subtitle: 'Question Sheet' 
+author: 'Dr Mercedes Torres Torres'
+classoption: twoside
+output:
+  pdf_document:
+    toc: no
+    fig_caption: yes
+    number_sections: true
+  html_notebook:
+    toc: no
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '2'
+header-includes: 
+- \usepackage{graphicx}
+- \usepackage{float}
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- \fancyhead[CE,CO]{}
+- \fancyhead[LE,LO]{\textit{COMP4030  Data Modelling and Analysis}}
+- \fancyhead[RE,RO]{\nouppercase{\textit{\leftmark}}}
+- \usepackage{xcolor}
+- \usepackage{framed}
+- \colorlet{shadecolor}{gray!20}
+---
+
+# Introduction {-}
+
+This question sheet presents a series of exercises designed to help you create and classify models as well as implement them in R. You will be applying the concepts you learned during the first two labs (vectors, matrices, data frames, control structures, functions, etc.) to define, create and simulate models.
+
+It is recommended that you work on the models with pen and paper first until you have defined them. Once you have defined and classified them, implementing them in R will be more straightforward.
+
+In this lab session, you will learn to:
+
++	Create models by hand
+
++	Implement and solve models in R using functions
+
++	Find the equilibrium values for models
+
++	Classify models
+
++	Analyse behavior of models using plots and functions.
+
+**This lab session does not have an Instruction Sheet, instead revise Lectures 2 and 3, and the models solved in class, along with your notes**.
+
+To begin, start your R editor (RStudio or your editor of choice).  Once you have finished revising them and are familiar with the concepts of models, mathematical models and classification of models, start working on these exercises.
+
+
+# Variarion in Price
+
+An economist is interested in the variation of the price of a single product. It is observed that a high price for the product in the market attracts more suppliers. However, increasing the quantity of the product supplied tends to drive the price down. Over time, there is an interaction between price and supply. The economist has proposed the following model, where Pn represents the price of the product at year n, and Qn the quantity:
+
+$$P_{n+1} = P_n - 0.1 (Q_n - 500)$$
+$$Q_{n+1} = Q_n + 0.2 (P_n - 100)$$
+
+
+1.	Does the model make sense intuitively? What is the significance of the constants 100 and 500? Explain the significance of the sign of the constants -0.1 and 0.2.
+Yes. 100 and 500 mean that how the price and quantity will be change in next year. -0.1 and 0.2 are ratio of Pn+1 and Qn+1. The sign of -0.1 and 0.2 control the Pn+1 and Qn+1 increase and decrease.
+
+2.	Write a R function that tests the initial condition in all cases present in Table 3 and predict the long-term behavior for the next 25 years at intervals of 1 year:
+
+|     | Price           | Quantity  |
+|---------------|:-------------:|------:|
+| Case 1      | 100 | 500 |
+| Case 2     | 200      |   500 |
+| Case 3 | 100     |    600 |
+| Case 4 | 100      |    400 |
+
+```{r}
+price_quantity = function(init_p,init_q,years){
+  library("ggplot2")
+  sup_pri = data.frame(n=0,p=init_p,q=init_q);
+  
+  for(i in 1:years){
+    sup_pri = rbind(sup_pri,c(i,tail(sup_pri$p,1) - 0.1*(tail(sup_pri$q,1)-500),
+                    tail(sup_pri$q,1) + 0.2*(tail(sup_pri$p,1)-100)))
+  }
+  sup_pri
+  ggplot(sup_pri,aes(x=n,y=value,color=variable)) + labs(color = "variables")+
+    geom_line(aes(y = p, col = "price"))+
+    geom_line(aes(y = q, col = "quantity"))+
+    ggtitle("Quantity/Price relationship")
+  
+}
+```
+```{r}
+price_quantity(100,500,25)
+```
+```{r}
+price_quantity(200,500,25)
+```
+```{r}
+price_quantity(100,600,25)
+```
+```{r}
+price_quantity(100,400,25)
+```
+
+
+# Simple Epidemic Model
+
+Suppose that during every day of an epidemic:
+
++ $x\%$ of ill people die
+
++ $y\%$ of ill people recover and become immune
+
++ $z\%$ of susceptible people become ill
+
+Let:
+
++ $I_n$ = number of ill people on day $n$
+
++ $S_n$ = number of susceptible people on day $n$
+
++ $R_n$ = number of recovered and immune people on day $n$
+
+1. Which three of the following options are consistent with the previous assumptions?
+
+    1. $I_{n+1} = I_n - (x/100) I_n - (y/100)I_n + (z/100)S_n$
+    
+    2. $I_{n+1} = I_n + (x/100) I_n - (y/100)I_n - (z/100)S_n$
+    
+    3. $S_{n+1} = S_n - (x/100) I_n - (y/100)I_n + (z/100)S_n$
+    
+    4. $R_{n+1} = R_n - (x/100) I_n - (y/100)I_n + (z/100)S_n$
+    
+    5. $S_{n+1} = S_n - (z/100)S_n$
+    
+    6. $R_{n+1} = R_n + (z/100)S_n$
+    
+    7. $R_{n+1} = R_n + (y/100)I_n$
+    
+    8. $S_{n+1} = S_n + (y/100)I_n$
+
+2. Write a function that solves and plots this model with the correct equations from question 1. Simulate the model with these conditions:
+    
+    1. $I_0 = 5, S_0= 1000, x = 0.5\%, y = 0.1\%, z = 0.7\%$ when looking into the next 20 days.
+    
+    2. $I_0 = 10, S_0= 10000, x = 2\%, y = 0.5\%, z = 0.4\%$ when looking into the next 20 days.
+    
+    3. $I_0 = 100, S_0= 1000000, x = 3\%, y = 0.5\%, z = 0.6\%$ when looking into the next 365 days.
+    
+    4. $I_0 = 100, S_0= 1000000, x = 3\%, y = 0.5\%, z = 0.6\%$ when looking into the next 1000 days.
+
+# Wolves and Moose 
+
+In the remote area of Isle Royale, wolves’ primary food source is a single prey: moose. An ecologist has been hired to predict the population levels of wolves and moose in the region. Let $W_n$ represent the wolf population after $n$ years, and $M_n$ represent the moose population after $n$ years. The ecologist has suggested the following model:
+
+$$ M_{n+1} = 1.2M_n - 0.004 W_nM_n$$ 
+$$ W_{n+1} = 0.7W_n + 0.005 W_nM_n $$
+
+The ecologist wants to know whether these two species can coexist in the habitat.
+
+1. Find the equilibrium values for this population. The equilibrium values of a model are those values such as, given a population P and a time n:  
+
+$$P_{n+1} = P_n = … = P$$
+Or, that is, the values of the population remain constant in time.
+
+2. Compare the signs of the coefficients in the previous model. Do they make sense?
+
+3. Write a function that calculates and plots the behaviour of both species.
+
+4. Test your model’s behaviour in the next 10 years with these initial populations:
+
+|     | Wolves           | Moose  |
+|---------------|:-------------:|------:|
+| Case 1      | 50 | 50 |
+| Case 2     | 60      |   60 |
+| Case 3 | 100     |    200 |
+| Case 4 | 151      |    400 |
+
+# Car Rental Company
+
+A car rental company has distributorships in Nottingham and Leicester. Travelers may rent a car in one city and drop the car off in the second city. Because cars are dropped off in both cities, the company wants to know the following: will a sufficient number of cars end up in each city to satisfy the demand for cars in that city? If not, how many cars must the company transport from Nottingham to Leicester or viceversa? The answers to these questions will help the company figure its expected cost.
+
+Analyzing the historical records, it is determined that 60\% of the cars rented in Nottingham are returning to Nottingham, whereas 40\% end up in Leicester. Of the cars rented from Leicester office, 70\% are returned to Leicester, whereas 30\% end up in Nottingham.
+
+1.	Develop a model of the system for the behavior of the number of cars on each city at the end of day $n$.
+
+2.	Classify all the elements of this model.
+
+3.	Write a function in R to model and solve the system. Make sure the function plots the behavior of both distributorships.
+
+4.	How many cars should Nottingham and Leicester have to ensure that the company does not have to transport cars between cities at the end of the day to meet demand. Note: This scenario is called ``in equilibrium'' in the literature.
+
+5.	Study the behavior of each distributorship in these four different cases as shown the following table:
+
+    |     | Nottingham           | Leicester  |
+    |---------------|:-------------:|------:|
+    | Case 1      | 7000 | 0 |
+    | Case 2     | 3000      |   4000 |
+    | Case 3 | 5000     |    2000 |
+    | Case 4 | 0      |    1700 |
+
+
+    a. What is the situation at the end of those 8 days in each case?
+    
+    b. Considering the behavior of the distributorships what can be said about the system’s stability?
+
+
+# Model Specification
+
+For the following exercises, identify potential systems, reduced system, variables and parameters that would be needed to develop a mathematical model able to solve the problem. Which data would you need to collect?
+
+1.	A botanist is interested in studying the shapes of leaves and the forces that mold them. She clips some leaves from the bottom of a white oak tree and finds the leaves to be rather broad and not very deeply indented. When shoe goes to the top of the tree, she finds very deeply indented leaves with hardly any broad expanse of blade.
+
+2.	How can you improve your ability to sign up for the best classes each term?
+
+3.	A transportation company is considering transporting people between skyscrapers in New York City via helicopter. You are hired as a consultant to determine the number of helicopters needed. 
+
+4.	When should a person replace their vehicle?
+

@@ -1,0 +1,210 @@
+---
+title: 'Lab 4: Modelling in R (II)'
+subtitle: 'Question Sheet' 
+author: 'Dr Mercedes Torres Torres'
+classoption: twoside
+output:
+  pdf_document:
+    toc: no
+    fig_caption: yes
+    number_sections: true
+  html_notebook:
+    toc: no
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '2'
+header-includes: 
+- \usepackage{graphicx}
+- \usepackage{float}
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- \fancyhead[CE,CO]{}
+- \fancyhead[LE,LO]{\textit{COMP4030  Data Modelling and Analysis}}
+- \fancyhead[RE,RO]{\nouppercase{\textit{\leftmark}}}
+- \usepackage{xcolor}
+- \usepackage{framed}
+- \colorlet{shadecolor}{gray!10}
+---
+
+# Introduction {-}
+
+This question sheet presents a series of exercises designed to help you create and classify models as well as implement them in R. You will be applying the concepts you learned during the first two labs (vectors, matrices, data frames, control structures, functions, etc.) to define, create and simulate models.
+
+It is recommended that you work on the models with pen and paper first until you have defined them. Once you have defined and classified them, implementing them in R will be more straightforward.
+
+In this lab session, you will learn to:
+
++	Create models by hand
+
++	Implement and solve models in R using functions
+
++	Find the equilibrium values for models
+
++	Classify models
+
++	Analyse behavior of models using plots and functions.
+
+**This lab session does not have an Instruction Sheet, instead revise Lectures 2 and 3, and the models solved in class, along with your notes**.
+
+To begin, start your R editor (RStudio or your editor of choice).  Once you have finished revising them and are familiar with the concepts of models, mathematical models and classification of models, start working on these exercises.
+
+# Humans vs Aliens
+
+The year is 2050. Twenty five years ago, in the spring of 2025, the Earth was invaded by aliens. A war, in which humans and aliens exterminated each other systematically, ensued. Right now, only two small colonies remain: one alien colony and one human colony. 
+Both humans and aliens are competing for survival and control of the planet, and the leaders of both colonies need to decide if they should start the second wave of the war. 
+
+Suppose that in the absence of war against each other, each specie exhibits unconstrained growth. In this case, the change in population during an interval of time (for example, one month) is proportional to the population size at the beginning of the interval. 
+
+1.	Create a model for the case in which no war is taking place between species. Assume constant and unknown growth rates for humans ($k_1$) and aliens ($k_2$) respectively. Assume death rates (due to natural causes) of $d_1$ and $d_2$ for humans and aliens, respectively.
+To build a model, we will follow these steps:
+1. Identify question or problem
+2. System analysis
+3. Formulate mathematical modle
+4. Solve mathematical model
+5. Interpret solution
+
+Let's apply all of these steps
+
+1. Indetify question or problem
+
+\textit{S:\{The Earth, the human population and the alien population\}}
+\textit{Q:\{How dose the populaiton of humans and aliens change when no war is taking place between species?\}}
+
+2. System analysis
+
+Our reduced system is:
+$S_r$:
+$$A(n) = alien\ population\ by\ month\ n$$
+$$H(n) = human\ populaiton\ by\ month\ n$$
+All other rates and constants too (k1,k2,d1,d2)
+
+**Note:** $A(n) = A_n$ and $H(n) = H_n$, they are two ways of representing the same information.
+
+3. Formulate mathematical model
+
+Let's combine $S_r$ to build our mathematical model.
+\textit{M:}
+
+$$A(n+1) = A(n) - d_2 * A(n) + k_2 * A(n)$$
+$$H(n+1) = H(n) - d_1 * H(n) + k_1 * H(n)$$
+/textit{Each population is unaffected by the other.}
+
+  a. Classify all the elements of the model.
+  k1 <- growth rate for humans
+  k2 <- growth rate for aliens
+  d1 <- death rate for humans
+  d2 <- death rate for aliens
+  H <- the population of humans
+  A <- the population of aliens
+  
+  b. Create a function in R that solves this model.
+```{r}
+get_population = function(humans,aliens,k1,k2,d1,d2,months){
+  library("ggplot2")
+  population = data.frame(m=0,h = humans,a = aliens);
+  for (i in 1:months){
+    past_h = tail(population$h,1)
+    past_a = tail(population$a,1)
+    population = rbind(population, c(i, (1-d1+k1) * past_h,
+                                     (1-d2+k2) * past_a))
+  }
+ hh = ggplot(population, aes(x=m, y = value, color = variable)) + labs(color = "Species") + 
+    xlab("Months") + ylab("Population Size") + 
+    geom_line(aes(y=h, col = "Humans")) +
+    geom_line(aes(y=a, col = "Aliens")) + 
+    ylim(1, max(max(population$h), max(population$a))) +
+    ggtitle("Humans/Aliens Populations when not at war");
+  print(hh)
+  
+  return(population)
+}
+```
+  
+  c. If the growth rate for humans was $k_1= 0.2$ and for aliens was $k_2= 0.3$ and the death rate for humans is $d_1=0.1$ and for aliens it is $d_2=0.15$ :
+    i.	Plot the changes of both populations in the same figure for the next year if the human colony currently has 300 humans and the alien colony has 150
+```{r}
+a1 = get_population(300,150,0.2,0.3,0.1,0.15,12)
+```
+    
+    ii. What is the situation after two years?
+```{r}
+a2 = get_population(300,150,0.2,0.3,0.1,0.15,24)
+```
+    
+    iii. What is the situation after 5 years?
+```{r}
+a3 = get_population(300,150,0.2,0.3,0.1,0.15,60)
+```
+2. Imagine that there is to be another war. Write the model for how both colonies will change. Assume constant and unknown killing rates for a human being killed by an alien when there is an encounter ($k_3$) and for an alien being killed by a human when there is an encounter ($k_4$).
+
+To build a model, we will follow these steps:
+1. Identify question or problem
+2. System analysis:
+$S_r:$
+
+$A(n)$ \textit{= alien population by month n}
+
+$H(n)$ \textit{= human population by month n}
+
+All other rates and constants too(k1,k2,d1,d2) and the killing rates(k3,k4).
+
+
+
+3. Formulate mathematical model
+
+
+\textit{M:}
+$$A(n+1) = A(n) - d_2 * A(n) + k_2 * A(n) - k_4 * A(n) * H(n)$$
+$$H(n+1) = H(n) - d_1 * H(n) + k_1 * H(n) - k_3 * A(n) * H(n)$$
+4. Solve mathematical model
+5. Interpret solution
+  a. Classify this model.
+  The same as above except, now the model is not linea.
+  b. Create a function in R that solves it.
+```{r}
+aliens_war = function(humans, aliens, months, k1, k2, d1, d2, k3, k4){
+  library("ggplot2")
+  
+  populations = data.frame(m=0, h = humans, a = aliens);
+  
+  for ( i in 1:months){
+    past_h = tail(populations$h,1)
+    past_a = tail(populations$a,1)
+    populations = rbind(populations, c(i, past_h * (1+k1-d1) - k3 * past_h * past_a,
+                                       past_a * (1+k2-d2) - k4 * past_h * past_a))
+  }
+  gg = ggplot(populations, aes(x=m, y = value, color = variable)) + labs(color = "Species") + 
+    xlab("Months") + ylab("Population Size") + 
+    geom_line(aes(y=h, col = "Humans")) +
+    geom_line(aes(y=a, col = "Aliens")) + 
+    ggtitle("Human/Alien Populations when at a war");
+  print(gg)
+  return(populations)
+}
+```
+  c. If the growth and natural death rates for and aliens remain the same as in 1., and if the killing rates that were observed in the first war are: 0.1\% for humans being killed by aliens and 0.2\% in the opposite case, which population values would ensure that both populations remain constant, with the colonies remaining at war forever?
+```{r}
+a1 = aliens_war(300, 150, 20,0.2, 0.3, 0.1, 0.15, 0.001,0.002)
+```
+    
+3.	Study the behavior of the colonies in these three different cases as shown in the following table when looking at the next 5 years:
+
+    |     | Humans           | Aliens  |
+    |---------------|:-------------:|------:|
+    | Case 1      | 74 | 101 |
+    | Case 2     | 75      |   99 |
+    | Case 3 | 80    |    100 |
+
+```{r}
+a1 = aliens_war(74, 101, 60,0.2, 0.3, 0.1, 0.15, 0.001,0.002)
+a2 = aliens_war(75, 99, 60,0.2, 0.3, 0.1, 0.15, 0.001,0.002)
+a3 = aliens_war(80, 100, 60,0.2, 0.3, 0.1, 0.15, 0.001,0.002)
+```
+  a. Which scenario would the human leader prefer? 
+    The human leader prefer the case 3.
+  b. Which scenario would the alien leader prefer?
+    The alien leader prefer the case 1.

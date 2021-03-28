@@ -1,0 +1,152 @@
+---
+title: 'Data Modelling and Analysis'
+subtitle: '\textcolor{blue}{Mock Lab submission: 2020/2021}' 
+author: 'Dr Mercedes Torres Torres'
+classoption: twoside
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+    fig_caption: yes
+    number_sections: true
+  html_notebook:
+    toc: yes
+    toc_depth: 2
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '2'
+header-includes: 
+- \usepackage{graphicx}
+- \usepackage{float}
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- \fancyhead[CE,CO]{}
+- \fancyhead[LE,LO]{\textit{COMP4030  Data Modelling and Analysis}}
+- \fancyhead[RE,RO]{\nouppercase{\textit{\leftmark}}}
+- \usepackage{xcolor}
+- \usepackage{framed}
+- \colorlet{shadecolor}{gray!20}
+---
+
+# Submission Information {-}
+
+Please complete the following information here:
+
+1. First Name:
+
+2. Last Name(s):
+
+3. Student ID: 
+
+
+# Information {-}
+
+This lab submission is composed of three parts, designed to assess your knowledge of data modelling, pre-processing, mining, and visualisation. It covers concepts seen in the the first seven labs of COMP4030. 
+
+This submission is open book and amounts to 25% of your final mark for COMP4030.
+
+You have 2 hours to complete this submission and upload it to Moodle, from 11:00 to 13:00 on the 21st of April 2021.
+
+# Submission instructions {-}
+
+1. The submission deadline is on the *11th of May (Monday) at 13:00*.
+
+1. Fill this .Rmd file with the answers to the questions.
+
+2. All exercises must be done in R.
+
+3. You may create as many auxiliary functions as you need.
+
+4. You may use annotations to your code as you see fit.
+
+5. Rename this .Rmd file as *COMP4030-XXXXXXXXXX.Rmd*, where _XXXXXXXXXX_ should be replaced with your student ID number (e.g. COMP4030-40781818.Rmd), and submit the single .Rmd file via Moodle (see website for the dedicated link).
+
+6 *Make sure your full name and student ID are shown in the first page of your report.* 
+
+# Assessment Criteria {-}
+
+The main assessment criteria for the lab submission are:
+
++ *Correctness*: that is, do you apply techniques correctly; do you make correct assumptions; do you interpret the results in an appropriate manner; etc.?
+
++ *Completeness*: that is, do you apply a technique only to small subsets of the data; do you apply only one technique, when there are multiple alternatives; do you consider all options; etc.?
+
++ *Originality*: that is, do you combine techniques in new and interesting ways; do you make any new and/or interesting findings with the data?
+
++ *Argumentation*: that is, do you explain and justify all of your choices?
+
+# Plagiarism and Collusion {-}
+
+**Plagiarism and collusion are completely unacceptable** and will be dealt with according to the University’s standard policies. Do NOT, under any circumstances, share code, figures, graphs, charts, results, etc.
+
+\newpage
+
+# Modelling
+
+For your first assignment as a wildlife conservationist in Brazil, you have been sent to the Amazonian rainforest to study the behaviour of a population of jaguars and anacondas with particularly violent tendencies. Natural enemies, these two species compete for survival and control of resources in the rainforest.
+
+Suppose that in the absence of an encounter against each other, both species exhibit unconstrained growth. In this case, the change in population during one month is proportional to the population size at the beginning of the month.
+
+In this scenario, you are aware of the following information:
+
+  + an_growth: the growth rate for anacondas
+
+  + jag_growth: the growth rate for jaguars
+  
+  + You are looking at monthly changes.
+  
+
+1. Following the steps seen in the labs, build a complete mathematical model to show how both populations change when there are no violent encounters between them. Use R to solve this model. What would happen in the next two years if there were 141 jaguars and 132 anacondas, when observable growth rates are 2.1% for the jaguars and 2.8% for the anacondas?
+
+1.a Answer the following questions:
+
+  + Is the model deterministic or stochastic? Why?
+
+  + Is the model natural of artificial? Why?
+
+  + Is the model distributed or lumped? Why?
+  
+  + Is the model linear or non-linear? Why?
+
+
+2. Following the steps seen in the labs, build a complete mathematical model to show how both populations change when there are violent encounters between. Use R to solve this model and interpret the solution for the next two years when there are 300 jaguars and 300 anacondas. Growth rates are maintained from the previous scenarios, and you have calculated the following rates: 
+  
+  + jag_kill: the proportion of jaguars killed in one-on-one fights with anacondas (0.1%)
+  
+  + an_kill: proportion of anacondas killed in one-on-one fights with jaguars (0.2%)
+
+2.a. Answer the following questions:
+
+  + Is the model discrete or continuous? Why?
+
+  + Is the model natural of artificial? Why?
+
+  + Is the model dynamic or static? Why?
+  
+  + Is the model linear or non-linear? Why?
+  
+  + Is the model robust? Why?
+ 
+
+# Data Analysis,  Visualisation, and Mining
+
+In this exercise, we will use the _rock_ dataset in R. Load it, save it into a dataframe called _r_. Then, create the following functions:
+
+1. Write a function, called _analysis(r)_ returns a dataframe with the number of elements, mean, median, variance and interquartile range of the attribute _r_. Test this function with _rock_.
+
+2. Use Principal Component Analysis (PCA) to create a reduced version of the dataset _r_, called _r\_redux_. Show a summary of the results of the PCA. What is the minimum number of dimensions that you retain to ensure 95\%  of the variance?
+
+3. Write a function, called _visualisation(r)_ that prints boxplot of all relevant fiels in _r_.
+
+4. Write a function called _shape_rate(r)_, which modifies _r_  by creating a new attribute called _rating._ _rating_ is equal to _normal_ if the shape is between 0.1 and 0.3 and _abnormal_ otherwise. This function should also prints the ratio of _normal_ to _abonormal_ observations.
+
+5. Write a function _class_analysis(r)_ that calculates the median _area_ and _shape_ of _normal_ and _abnormal_ samples in _r_
+
+6. Write a function, called _create_scatterplot(r)_, which takes a dataframe _r_ as input and prints a scatterplot of _area_ and _shape_ of those observations in _r_ with a permeability _perm_ over 500. Include the _perm_ information in the scatterplot. Test this function.
+
+
+

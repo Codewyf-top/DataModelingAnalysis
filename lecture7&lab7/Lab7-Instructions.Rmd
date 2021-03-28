@@ -1,0 +1,110 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+# Lab7-Instructions
+knitr::opts_chunk$set(fig.align = 'center', out.width = '60%', fig.pos = 'H')
+```
+```{r}
+ir = iris
+str(ir)
+summary(ir)
+head(ir,5)
+```
+```{r}
+# Visualisation
+all = pairs(ir[1:4], main = "Iris", pch = 19, col = as.numeric(ir$Species)+1)
+```
+```{r}
+sapply(ir[1:4], var)
+```
+```{r}
+range(sapply(ir[1:4], var))
+```
+```{r}
+# Standardisation
+# Before applying PCA, we must standardize our variables with scale() function.
+# Do not forget to remove your label or class variable. 
+# PCA does not use the labels in any way
+iris.stand = as.data.frame(scale(iris[1:4]))
+head(iris.stand)
+```
+```{r}
+# After scaling, the st and mean of each attribute should be 1 and 0, respectively
+sapply(iris.stand, sd)
+# Now standard deviations are 1
+```
+```{r}
+sapply(iris.stand, mean)
+# Now, mean should be 0 (or very very close to 0)
+```
+
+
+```{r}
+# Calculate PCA
+# prcomp() princomp()
+# prcomp() scale=TRUE
+pca = prcomp(iris.stand,scale. = T)
+pca2 = princomp(iris.stand,scores = T)
+```
+```{r}
+pca
+summary(pca)
+```
+```{r}
+pca2
+summary(pca2)
+```
+```{r}
+# standard deviation
+pca$sdev
+```
+```{r}
+# screeplot() to see how much variance each PC has in a visual way
+# it will be useful to decide how many principal components should be retained
+screeplot(pca, type = "l", col = 3, main = "Variance explained by PC")
+title(xlab = "Principal Components")
+```
+```{r}
+# The loadings for the principal components are stored in :
+pca$rotation # This shows the linear combinations of each variable into each PC
+```
+```{r}
+biplot(pca,cex=0.8)
+abline(h=0,v=0,lty=2,col=8)
+```
+```{r}
+source("bips.R")
+bip(pca, col = iris$Species, main = "PC1/PC2 according to Species")
+```
+```{r}
+cor(iris.stand)
+```
+```{r}
+cor(pca$x)
+```
+```{r}
+summary(pca)
+```
+```{r}
+# We can see that for 0.95 variance, you'll need to dimensions
+# So, let keep those two dimensions:
+iris_pca = pca$x[,1:2]
+head(iris_pca,4)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

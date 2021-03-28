@@ -1,0 +1,250 @@
+---
+title: 'Lab 6: Data Visualisation in R'
+subtitle: 'Question Sheet' 
+author: 'Dr Mercedes Torres Torres'
+classoption: twoside
+output:
+  pdf_document:
+    toc: no
+    fig_caption: yes
+    number_sections: true
+  html_notebook:
+    toc: no
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '2'
+header-includes: 
+- \usepackage{graphicx}
+- \usepackage{float}
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- \fancyhead[CE,CO]{}
+- \fancyhead[LE,LO]{\textit{COMP4030  Data Modelling and Analysis}}
+- \fancyhead[RE,RO]{\nouppercase{\textit{\leftmark}}}
+- \usepackage{xcolor}
+- \usepackage{framed}
+- \colorlet{shadecolor}{gray!10}
+---
+
+# Introduction {-}
+
+This question sheet presents a series of exercises designed to make you use R for data visualisation purposes. You will be applying the concepts you learned during the previous labs (data frames, reading data from files, etc.) to analyse and visualise data.
+
+In this lab session, you will learn to:
+
++ Create simple graphs to analyse your data using basic R.
+
++ Create sophisticated graphs to analyse data using the ggplot2 library.
+
++ Choose appropriate visualisation methods for data analysis purposes.
+
+To begin, start your R editor (RStudio or your editor of choice). I recommend that you revise Lecture 4 and Lecture 5 and read the Instruction sheet carefully. Once you have finished reading them, start working on these exercises.
+
+# Base R
+
+Use the _Iris_ dataset to create and analyse simple graphs:
+
+1. Create a pie chart for the Species class in the Iris dataset. Setosa should be blue, versicolor should be yellow and virginica should be magenta. Save this chart as _species\_piechart.png_.
+```{r}
+ir = iris
+library("ggplot2")
+slices <- c(50,50,50)
+lbls <- c("Setosa","Versicolor","Virginica")
+col <- c("blue","yellow","magenta")
+pie(slices, lbls, col = col, main = "Pie chart of Iris Species class")
+```
+```{r}
+lbls <- c("Setosa","Versicolor","Virginica")
+pie(table(ir$Species), lbls, col = c("blue", "yellow","magenta"))
+```
+
+2. Create a function called ``\textit{plotPetalLength.r}'' that reads the _Iris_ dataset and plots a histogram of petal lengths with:
+    a.	30 bars in a colour of your choosing
+    b.	A sensible title
+    c.	Two lines of different colour showing the mean and the median
+    d.	A legend for the median and mean lines
+```{r}
+plotPetalLength <- function(){
+  ir = iris
+  hist(ir$Petal.Length, breaks = seq(1,7,0.5), col = "purple",main = "Histogram of Petal Length")
+  abline(v=mean(ir$Petal.Length), col = "orange", lwd = 5)
+  abline(v=median(ir$Petal.Length), col = "blue", lwd = 5)
+  legend("topright", c("mean", "median"), col = c("orange", "blue"), pch = 16)
+}
+plotPetalLength()
+```
+3. Create a dotplot that groups samples into their species and shows how the petal lengths of all instances vary. Each group should have a different colour of your choosing.
+```{r}
+x = ir[order(ir$Petal.Length),]
+x$cls = factor(x$Species)
+x$color[x$cls=='setosa'] = 'red'
+x$color[x$cls=='virginica'] = 'blue'
+x$color[x$cls=='versicolor'] = 'darkgreen'
+dotchart(x$Petal.Length, labels = row.names(x), cex=.7, groups = x$cls,
+         main = "Petal Length \n grouped by Plant type",
+         xlab = "length in cms", gcolor = "black", color = x$color)
+```
+
+    a.	What can be inferred from this plot regarding the petal length of setosa plants in comparison to versicolor and virginica plants?
+    
+4. Create a scatterplot that plots sepal width versus petal length. Group points according to class.
+
+    a.	What can be inferred from the scatterplot?
+```{r}
+plot(ir$Sepal.Width, ir$Sepal.Length, col=ir$Species, xlab = "Sepal Width", ylab = "Sepal Length", main = "Sepal Width vs Sepal Length")
+legend("topright", pch = 16, legend = unique(ir$Species), col = unique(ir$Species))
+```
+
+5. Create a scatterplot matrix showing the relationship between all numerical variables in the _iris_ dataset.
+
+    a.	Looking at the graphs, which attributes have a higher correlation? 
+```{r}
+pairs(ir[,1:4], col = ir$Species)
+
+```
+    
+6. Plot a 2-by-2 graph called ``\textit{boxplots.png}'' in which each quadrant shows:
+
+    a.	A boxplot of all data and how they vary according to the length and width of the sepal and the petal.
+    b.	A boxplot of setosa plants and how they vary according to the length and width of the sepal and petal.
+    c.	A boxplot of versicolor plants and how they vary according to the length and width of the sepal and petal.
+    d.	A boxplot of virginica plants and how they vary according to the length and width of the sepal and petal.
+    e. Answer the following questions:
+        i.	Which species has the largest sepal length?
+        ii. What does the ``petal length'' data of the whole data boxplot tell us about the distribution of iris?
+```{r}
+library("dplyr")
+par(mfrow=c(2,2))
+boxplot(ir[,1:4], las=3, main="All species", ylab="cms")
+ir %>% filter(Species == "setosa") %>% .[,1:4] %>%
+  boxplot(las=3, main="Setosa", ylab="cms")
+ir %>% filter(Species == "virginica") %>% .[,1:4] %>%
+  boxplot(las=3, main="Virginica", ylab="cms")
+ir %>% filter(Species == "versicolor") %>% .[,1:4] %>%
+  boxplot(las=3, main="Versicolor", ylab="cms")
+```
+
+# Advanced Visualisation
+
+In this section, we will be using _ggplot2_  to create more complicated and informative graphs in R. In terms of data, we will be using a dataset of footballers from different regions in Narnia. This dataset is called _team_ and you can download it from Moodle. **Remember that all graphs need to be titled and all axes labelled.**
+
+1. Create a histogram of that shows the age distribution from all players at intervals of 1 year.
+
+    a.	What is the most common age? How common is it?
+
+2. Create a histogram that shows the salary distribution of players that are _Defenders._ Choose a sensible interval.
+
+3. Repeat the histogram of task 1, but grouping the data according to Gender.
+
+    a.	How many women are aged 27?
+    b.	How many men are aged 33?
+
+4. Create a histogram that shows the age distribution of _Forward_ players grouped into teams. Choose a sensible age interval.
+```{r}
+library("ggplot2")
+ggplot(team, aes(x = Age, fill = Team)) + geom_histogram(binwidth = 1, alpha = 0.4) +
+  scale_x_continuous(name = "Years", breaks = seq(min(team$Age),max(team$Age),2)) + 
+  scale_y_continuous(name = "Frecuency") + 
+  ggtitle("Histogram of Age by Team") + 
+  theme_minimal() + 
+  scale_fill_brewer(palette = "Spectral")
+```
+
+5. Create a scatterplot that shows the relationship between _speed_ and _height_ of players from _Bim_, _Dragon Island_ and _Calormen_, grouped by Gender. Add a line that fits each group of the data. Consider the tendencies shown in this:
+
+    i.	How good are the fit lines?
+    ii.	Do faster male footballers tend to be taller or shorter?
+    
+6. Create a graph with separate scatterplots that show Weight vs Height of players grouped into their teams. Separate each scatterplot according to Gender. Title the graph and the axes sensibly. Figure 1 shows an example.
+```{r}
+knitr::include_graphics("Picture1.png")
+```
+```{r}
+ggplot(team, aes(x = Weight, y = Height)) + 
+  geom_point(aes(color = Team), shape = 2) +
+  ggtitle("Narnia's National Team information separated by Gender") + 
+  scale_x_continuous(name = "Weight(kg)")+
+  scale_y_continuous(name = "Height(m)") + 
+  facet_grid(. ~ Gender, scales = "free", labeller = label_both)
+```
+
+
+7.	Apply the functions and exercises done previously to replicate the graph shown in Figure 2. This graph shows:
+
+    a.	Members of all teams grouped by team using colour. 
+    b.	Members of all teams grouped by gender using shape. Female players are shown with a diamond mark and male players are shown with a triangle mark.
+    c.	Those players who ply the Forward position have their speed shown as a label. (Hint: the _ggrepel_ package will come in handy here).
+    d.	It is titled _NARNIA’S NATIONAL TEAM INFORMATION_.
+    e.	The X axis is called ``Weight of all players'' and ranges between 40 and 85, with breaks at increments of 5. (Hint: the _grid_ package will be helpful here).
+    f.	The Y axis is called ``Height of all players'' and ranges between 1.49 and 2.01, with breaks at intervals of 0.1.
+
+```{r ex1, echo=FALSE, out.width = '80%', fig.align = "center" , fig.cap="Narnia’s National Team Information Separated According to gender"}
+knitr::include_graphics("Picture1.png")
+```
+```{r ex2, echo=FALSE, out.width = '80%', fig.align = "center" , fig.cap="Narnia’s National Team Information. All players from all teams, whether selected or not, are shown"}
+knitr::include_graphics("Picture2.png")
+```
+```{r}
+library(ggrepel)
+ggplot(team, aes(x=team$Weight..kg., y=team$Height..cm., color=Team, shape=Gender)) +
+  geom_point(size = 2, stroke = 1) + scale_shape_manual(values = c(23,24)) + 
+  geom_text_repel(aes(label_Speed), color = "gray20",
+                  data = subset(team, Position %in% c("Forward")), force = 1) + 
+  ggtitle("NARNIA'S NATIONAL TEAM INFORMATION") + 
+  scale_x_continuous(name = "Weight of all players", limits = c(40,85),
+                     breaks = seq(40,85, by =5))+
+  scale_y_continuous(name = "Height of all player",
+                     limits = c(1.49,2.01), breaks = seq(1.49, 2.01, by = 0.1))
+```
+
+#	Choosing the right visualisation techniques
+
+In this section, you will have to use the skills developed in the previous labs and use statistics and visualisation to provide a meaningful analysis of the _Reviews_ dataset. You can download the _reviews.csv_ dataset from Moodle. 
+
+The Reviews dataset contains over 84,500 instances of people rating different movies. The attributes included in the dataset are:
+
++	_userID_: the ID of the reviewer. One reviewer can have a variable number of reviews.
++	_movieID_: the movie reviewed by the reviewer.
++	_rating_: how many stars the reviewer has given to the movie. The lowest score is 0.0 and the highest is  5.0.
++	_date_: date and time in which the review was uploaded.
++ _movieTitle_: the title of the movie reviewed.
++	_movieYear_: the year the movie was released.
++	_movieGenre_: the genre of the move. Although one movie can be of many different genres, for the purpose of this exercise, we will only consider the main genre of a movie.
+ 
+You have been hired by _Calabaza Productions_, a production company interested in studying trends in reviews from movies released in the last hundred years. Your job is to provide a comprehensive set of statistics and visualisations that can help _Calabaza Productions_ understand the dataset.
+ 
+1.	 Analyse the data to familiarise yourself with the contents of the dataset. Calculate appropriate centrality and dispersion measurements for all attributes. 
+
+2.	Use analytics to answer the following questions:
+
+    a.	How many reviewers have participated?
+    b.	How many movies have been reviewed? 
+    c.	Which reviewer has the most reviews? And the least?
+    d.	Which genre has the most reviews? And the least?
+    e.	Which is the oldest movie reviewed? Who reviewed it (if more than one reviewer rated it, return all of them)?
+    f.	Which one(s) is (are) the highest-rated genres of the 1990s?
+    g.	What is the most reviewed movie? What is its average score?
+
+3.	Use visualisation to answer the following questions:
+
+    a.	What is the distribution of ratings for all movie genres? 
+```{r}
+ggplot(review) + geom_histogram(bins = 25, aes(x = rating, fill = movieGenre)) +
+  facet_wrap(~movieGenre) + ggtitle("Distribution by Genre")
+```
+    
+    b.	What is the distribution of Comedies according to release decade?
+```{r}
+ggplot((filter(review, movieGenre == "Comedy")), aes(movieYear)) +
+  geom_histogram(binwidth = 10, colour = "red4", fill = "firebrick") +
+  scale_x_continuous(name = "Decades", breaks = seq(1920, 2020, 5)) +
+  scale_y_continuous(name = "Reviews") +
+  ggtitle("Distribution of Comedies by release decade")
+```
+    
+    c. How did the average ratings of Comedies, Westerns, Dramas and Horror change between 2000 and 2002?
+    d.	Do a monthly comparison of the number of Horror movies and Animations of reviews uploaded between two years of your choosing.

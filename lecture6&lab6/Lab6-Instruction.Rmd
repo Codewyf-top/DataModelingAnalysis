@@ -1,0 +1,245 @@
+---
+title: "Lab6-Instruction"
+output: html_notebook
+---
+```{r}
+ir = iris
+```
+```{r}
+a = seq(1:15)
+c = sample(20,15)
+plot(a,c,col = "red", pch = "*", main = "A Title", xlab = "X Label", ylab = "Y Label")
+```
+```{r}
+b = sample(20,15)
+plot(a,c,col = "red", pch = "*", main = "A Title", xlab = "X Label", ylab = "Y Label")
+points(a,b,col = "blue", pch = "+")
+```
+```{r}
+a = 1:15
+plot(a,c, col = "red", type = "l", main = "A Title", xlab = "X Label", ylab = "y Label")
+lines(a,b, col = "blue")
+```
+```{r}
+a = 1:15
+plot(a,c,col = "red", type = "l", main = "A Title", xlab = "X Label", ylab = "Y Label")
+lines(a,b, col = "Blue")
+legend("bottomright", c("Variable c", "Variable b"), col = c("red", "blue"), pch = 16)
+```
+```{r}
+# pie chart
+pie(table(ir$Species))
+```
+```{r}
+pie(table(ir$Species), col = c("white","blue","red"), main = "Classes in Iris")
+```
+```{r}
+# Scatterplots
+plot(ir$Sepal.Length,ir$Sepal.Width, ylab = "Sepal Width", xlab = "Sepal Length", main = "Sepal Width vs Sepal Length")
+```
+```{r}
+# colour points
+plot(ir$Sepal.Length,ir$Sepal.Width, xlab = "Sepal Length", ylab = "Sepal Width", main = "Sepal Width vs Speal Length", col = "red")
+```
+```{r}
+# Points will be coloured according to ir$Species
+plot(ir$Sepal.Length,ir$Sepal.Width, xlab = "Sepal Length", ylab = "Sepal Width", main = "Sepal Width vs Sepal Lenght", col = ir$Species)
+```
+```{r}
+# Histogram
+hist(ir$Sepal.Width)
+hist(ir$Sepal.Length)
+```
+```{r}
+hist(ir$Sepal.Width, breaks = 15, col = "red", main = "Histogram of Sepal Width", xlab = "Sepal Width")
+```
+```{r}
+hist(ir$Sepal.Width, breaks = seq(1,5,0.2), col = "purple", main = "Histogram of Sepal width", xlab = "Sepal Width
+")
+```
+```{r}
+hist(ir$Sepal.Width, breaks = seq(1,5,0.2), col = "purple", main = "Histogram of Sepal Width")
+abline(v=mean(ir$Sepal.Width),col = "red", lwd = 3)
+abline(v=median(ir$Sepal.Width),col = "green", lwd = 3)
+legend("topright",c("mean","median"),col = c("red","green"),pch=16)
+```
+```{r}
+boxplot(ir$Sepal.Length, xlab = "Sepal Length")
+```
+```{r}
+boxplot(ir[,1:4], main = "Boxplot of Iris atributes")
+```
+```{r}
+# arranges graphs in rows
+par(mfrow=c(1,2))# 1row, 2 columns
+boxplot(ir$Sepal.Length, las = 3, main = "Sepal Length")
+boxplot(ir$Sepal.Width, las = 3, main = "Sepal Width")
+```
+```{r}
+pairs(ir[,1:2])
+```
+```{r}
+pairs(ir[,1:4], col = ir$Species)
+```
+```{r}
+# 3D Graphs
+library(plotly)
+plot_ly(ir, x = ~Sepal.Width, y = ~Sepal.Length, z = ~Petal.Length, color = ~Species, colors = c('#CA381B', '#BFE82A','#BFA8AA')) %>% add_markers()
+```
+
+```{r}
+# ggplot2
+library(ggplot2)
+ir = iris
+names(ir) = c("sepal.length","sepal.width", "petal.length","petal.width","class")
+names(ir)
+```
+```{r}
+```
+
+
+```{r}
+ggplot(ir) + geom_point(aes(x=sepal.length, y=sepal.width, color = class))
+```
+```{r}
+# visualistaion
+ggplot(subset(ir, class %in% c("setosa", "virginica"))) +
+  geom_point(aes(x=sepal.length, y=sepal.width, color=class))
+```
+```{r}
+# points (scatterplots)
+ir_set = subset(ir, class %in% c("setosa"))
+```
+```{r}
+ggplot(ir_set, aes(x=petal.length,y=petal.width)) + geom_point() +
+  ggtitle("Petal Length vs Petal Width")
+```
+```{r}
+ggplot(ir_set) + geom_point(aes(x=petal.length/petal.width, y=sepal.length/sepal.width)) +
+  ggtitle("ScatterPlot of Rations")
+```
+```{r}
+# Lines
+ir_versi = subset(ir, class %in% c("versicolor", "virginica"))
+ir_versi$pred.SL = predict(lm(sepal.length ~ log(petal.length), data = ir_versi))
+ggplot(ir_versi, aes(x=log(petal.length),y=sepal.length)) + 
+  geom_point(aes(color = class)) + geom_line(aes(y=pred.SL)) +
+  ggtitle("Sepal Length vs log(petal.length) Fitted with Regression Line")
+```
+```{r}
+ir_set = subset(ir, class %in% c("setosa"))
+ggplot(ir_set, aes(x=sepal.length, y=sepal.width)) + geom_point() + geom_smooth()
+```
+```{r}
+# Boxplot
+ggplot(ir) +
+  geom_boxplot(aes(x=class, y=sepal.length)) + 
+  ggtitle("Boxplot of Sepal Length")
+```
+```{r}
+# let's create "indoor" , a categorical variable recording if the plants were indoor(TRUE) or outdoor (FALSE) plants
+# For the purpose of this example, we will give it random values
+ir$indoor = sample(c("TRUE","FALSE"),150,replace=TRUE)
+ggplot(ir) + geom_boxplot(aes(x=class,y=sepal.length, fill=indoor))
+```
+```{r}
+stacked_ir = stack(ir[,1:4])
+head(stacked_ir,5)
+```
+```{r}
+ggplot(stack(ir[,1:4]), aes(x=ind,y=values)) + geom_boxplot() +
+  xlab("Attributes") + ylab("Milimiters") + 
+  ggtitle("Boxplot of Attributes")
+```
+```{r}
+library("ggrepel")
+ggplot(ir,aes(x=sepal.length,y=sepal.width)) + 
+  geom_text(aes(label=petal.length), size=3) +
+  ggtitle("Sepal Length vs Sepal Width")
+```
+```{r}
+library(ggrepel)
+p1 = ggplot(ir_set, aes(x=sepal.length,y=sepal.width))
+p1 + geom_point() + geom_text_repel(aes(label=petal.length), force=3)
+```
+
+```{r}
+# Aesthetic Mapping
+p1 +
+  geom_point(aes(size = 2),
+             color = "red")
+```
+```{r}
+ggplot(ir, aes(x=sepal.length,y=sepal.width)) +
+  geom_point(aes(color=petal.length, shape = class))
+```
+```{r}
+# Scale Modification
+p1 = ggplot(ir, aes(x=petal.length,y=petal.width)) + 
+  geom_point()
+p1
+```
+```{r}
+# Now, let’s create a new scale, that divides flowers into “S, M, L, XL,XXL” according to their Sepal Length. We manually code each size interval so that S < 4.3, 4.3 < M < 5.3, 5.3 < L < 6.3, 6.3 < XL < 7.9, and XXL > 7.9. 
+p1 + geom_point(aes(color=sepal.length),
+                alpha=0.5,size=1.5) + 
+  scale_x_continuous(name = "Length of the pentals") +
+  scale_y_continuous(name = "Width of the pentals") +
+  scale_color_continuous(name = "",
+                         breaks = c(4.3,5.3,6.3,7.3,7.9),
+                         labels = c("S","M","L","XL","XXL"),
+                         low = "blue", high = "red")
+```
+```{r}
+# Faceting
+cw = ChickWeight
+# Take a look at the dataset
+head(cw,5)
+```
+```{r}
+p = ggplot(cw, aes(x=weight,y=Time))
+p + geom_line(aes(color = Diet))
+```
+```{r}
+p + geom_line() + facet_wrap(~Diet)
+```
+```{r}
+p5 = p + geom_line() + facet_grid(~Diet)
+p5
+```
+```{r}
+p5 + theme_classic()
+p5 + theme_gray()
+p5 + theme_bw()
+```
+```{r}
+p5 + theme_minimal() +
+  theme(text = element_text(color = "turquoise"),
+        strip.background = element_rect(fill = "turquoise"))
+```
+```{r}
+theme_new <- theme_bw() +
+  theme(plot.background = element_rect(size = 1, color ="gray", fill = "black"),
+        text = element_text(size = 12, color = "ivory"),
+        axis.text.y = element_text(color = "purple"),
+        axis.text.x = element_text(color = "turquoise"),
+        panel.background = element_rect(fill = "pink"),
+        strip.background = element_rect(fill = "orange")
+      
+        )
+p5 + theme_new
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
